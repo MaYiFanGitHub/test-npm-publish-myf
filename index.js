@@ -13,6 +13,10 @@ const __print = work => {
     work.stdout.on('data', d => {
         console.log(chalk.green('[INFO] '), d, '\n');
     });
+
+    work.on('close', (code) => {
+        console.log(`子进程退出，退出码 ${code}`);
+    });
 };
 
 /* 登陆 */
@@ -34,15 +38,9 @@ const login = (success, error) => {
 /* git pull */
 const gitPull = (success, error) => {
     console.log(chalk.green('[INFO]'), '同步远程最新代码...\n')
-    let cmd = 'git pull';
+    // let cmd = 'git pull';
     __print(
-        exec(cmd, (err, stdout, stderr) => {
-            if (!err) {
-                success();
-            } else {
-                error();
-            }
-        })
+        spawn('npm', ['version', 'patch'])
     );
 }
 
@@ -75,10 +73,10 @@ const npmPublish = (success, error) => {
         })
     );
 }
-login(() => {})
+// login(() => {})
 gitPull(() => { console.log(111); });
-npmVersion(()=>{})
-npmPublish(() => {})
+// npmVersion(()=>{})
+// npmPublish(() => {})
 // isLogin(() => {console.log(1);}, () => {console.log(2);});
 /// 
 
