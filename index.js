@@ -6,10 +6,10 @@ const chalk = require('chalk');
 /* 命令打印输出 */
 const __print = work => {
     work.stdout.on('data', d => {
-        console.log(chalk.green('[INFO] '), d);
+        console.log(chalk.green('[INFO] '), d, '\n');
     });
     work.stderr.on('data', d => {
-        console.log(chalk.red('[ERR] ' + d));
+        console.log(chalk.red('[ERR] ' + d + '\n'));
         exit(1);
     });
 };
@@ -30,10 +30,11 @@ const isLogin = (success, error) => {
 
 /* git pull */
 const gitPull = (success, error) => {
-    console.log(chalk.green('√'), '同步最新代码...')
+    console.log(chalk.green('√'), '同步远程最新代码...\n')
     let cmd = 'git pull --rebase';
     __print(
         exec(cmd, (err, stdout, stderr) => {
+            console.log('err+++++', err);
             if (!err) {
                 success();
             } else {
@@ -42,7 +43,7 @@ const gitPull = (success, error) => {
         })
     );
 }
-gitPull(() => {  }, () => {})
+gitPull(() => { console.log(111); });
 // isLogin(() => {console.log(1);}, () => {console.log(2);});
 
 

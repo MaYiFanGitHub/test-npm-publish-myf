@@ -8,6 +8,6 @@
 # send "83964472@qq.com\n"
 # #interact
 # expect off
-
+asdf
 #!/bin/bash  
 (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
