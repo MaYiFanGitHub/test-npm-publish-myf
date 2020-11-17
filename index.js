@@ -8,7 +8,7 @@ const chalk = require('chalk');
 const __print = work => {
     work.stderr.on('data', d => {
         console.log(chalk.red('[ERR] ' + d + '\n'));
-        exit(1);
+        // exit(1);
     });
     work.stdout.on('data', d => {
         console.log(chalk.green('[INFO] '), d, '\n');
@@ -35,12 +35,13 @@ const login = (success, error) => {
     );
 };
 
+
 /* git pull */
 const gitPull = (success, error) => {
     console.log(chalk.green('[INFO]'), '同步远程最新代码...\n')
     // let cmd = 'git pull';
     __print(
-        spawn('npm', ['version', 'patch'])
+        exec('git fetch origin')
     );
 }
 
@@ -74,8 +75,8 @@ const npmPublish = (success, error) => {
     );
 }
 // login(() => {})
-// gitPull(() => { console.log(111); });
-npmVersion(()=>{})
+gitPull(() => { console.log(111); });
+// npmVersion(()=>{})
 // npmPublish(() => {})
 // isLogin(() => {console.log(1);}, () => {console.log(2);});
 /// 
