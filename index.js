@@ -32,16 +32,18 @@ const isLogin = (success, error) => {
 const gitPull = (success, error) => {
     console.log(chalk.green('√'), '同步远程最新代码...\n')
     let cmd = 'git pull --rebase';
-    __print(
+    // __print(
         exec(cmd, (err, stdout, stderr) => {
             console.log('err+++++', err);
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
             if (!err) {
                 success();
             } else {
                 error();
             }
         })
-    );
+    // );
 }
 gitPull(() => { console.log(111); });
 // isLogin(() => {console.log(1);}, () => {console.log(2);});
