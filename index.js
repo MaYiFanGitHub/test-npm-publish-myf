@@ -74,8 +74,8 @@ const npmPublish = (success, error) => {
     );
 }
 // login(() => {})
-gitPull(() => { console.log(111); });
-// npmVersion(()=>{})
+// gitPull(() => { console.log(111); });
+npmVersion(()=>{})
 // npmPublish(() => {})
 // isLogin(() => {console.log(1);}, () => {console.log(2);});
 /// 
