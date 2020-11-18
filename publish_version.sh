@@ -14,7 +14,11 @@ function build_version() {
 
     if [ $? -eq 1 ]; then
         print "----构造失败----" "[31m"
-        git reset --soft $1
+
+        if [ "$env_type" = "local" ]; then
+            git reset --soft $1
+            git reset HEAD
+        fi
         exit 1
     fi
     
@@ -29,7 +33,7 @@ function publish() {
         sleep 1
         version=`npm view @baidu/publish-test-mayifan version`
         print "----版本发布成功，当前版本号$version----" "[32m"
-        print "----请使用 npm i @baidu/med-ui@$version -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
+        print "----请使用 npm i @baidu/med-ui@$version --save --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
         if [ "$env_type" = "local" ]; then
             git reset --soft $1
@@ -37,12 +41,13 @@ function publish() {
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
-        # git tag -d $version1
         print "----发布失败...----" "[31m"
 
-        # if [ "$2" != "" ]; then
-        #     git reset --soft $2
-        # fi
+        if [ "$env_type" = "local" ]; then
+            git reset --soft $1
+            git reset HEAD
+            git checkout .
+        fi
         exit 1
     fi
 }
@@ -102,6 +107,7 @@ function commit_code() {
     fi
     if [ $? -eq 1 ]; then
         print "---提交代码失败...----" "[31m"
+        git reset HEAD
         exit 1
     fi
 }
@@ -155,5 +161,6 @@ else
     build
     login
     build_version
+    publish
     echo '123'
 fi
