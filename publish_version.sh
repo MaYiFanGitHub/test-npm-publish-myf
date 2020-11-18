@@ -64,6 +64,10 @@ function login() {
     if [ $? -eq 1 ]; then
         print "----当前npm用户未登陆，正在使用默认账号进行登陆！----"
         (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
+        if [ $? -eq 1 ]; then
+            print "---自动登陆失败...----" "[31m"
+            exit 1
+        fi
     fi
 }
 
@@ -135,6 +139,8 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     commit_code #提交代码
     build   #编译
     echo 1111
+    login   #登陆
+    echo 2222
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     cr
