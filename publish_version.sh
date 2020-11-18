@@ -45,10 +45,14 @@ function publish() {
         print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
         if [ "$env_type" = "local" ]; then
+            # 变更为一条commit信息
+            git reset --soft origin/master
+            git add .
+            git commit -m "变更为一条commit信息$version"
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
-        # git tag -d $version
+        # git tag -d $version1
         print "----发布失败...----" "[31m"
 
         # if [ "$2" != "" ]; then
@@ -60,22 +64,22 @@ function publish() {
 
 # 登陆
 function login() {
-    print "----正在尝试登陆...----" "[32m"
+    print "----正在尝试登陆NPM...----" "[32m"
     npm whoami >/dev/null 2>&1
     if [ $? -eq 1 ]; then
         print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
         (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
         if [ $? -eq 1 ]; then
-            print "---自动登陆失败...----" "[31m"
+            print "---NPM自动登陆失败...----" "[31m"
             exit 1
         fi
     fi
-    print "----登陆成功----" "[32m"
+    print "----NPM账号登陆成功----" "[32m"
 }
 
 # 收集icafeID与commit信息
 function gather_info() {
-    read -t 30 -p "请输入icafeId:" icafe_id
+    read -t 30 -p "请输入本次修改的icafeId:" icafe_id
     read -t 60 -p "请输入本次修改的信息:" commet_info
 
     if [ -z $icafe_id  ]; then
@@ -90,8 +94,17 @@ function gather_info() {
 
 # 提交代码
 function commit_code() {
+    print "---正在拉取最新代码...----" "[31m"
+    git pull
+    if [ $? -eq 1 ]; then
+        print "---拉取最新代码失败，请解决冲突...----" "[31m"
+        exit 1
+    fi
     git add .
-    git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
+
+    if [ "`git diff --cached --name-only`" != "" ]; then
+        git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
+    fi
     if [ $? -eq 1 ]; then
         print "---提交代码失败...----" "[31m"
         exit 1
@@ -119,8 +132,8 @@ function build() {
     print "----编译成功...----"
 }
 
-# 获取提交文件
-# git add .
+# 获取提交文件2
+# git add . 1
 
 # STAGE_FILE=1
 if [ "`git diff --cached --name-only`" != "" ]; then
@@ -136,13 +149,15 @@ commet_info="" # 提交信息
 
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
-    gather_info #收集icafe信息
-    commit_code #提交代码
     build   #编译
     login   #登陆
+    gather_info #收集icafe信息
+    commit_code #提交代码
     build_version   #构建版本
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
+    gather_info
+    commit_code
     cr
     if [ $? -eq 1 ]; then
         print "----发起CR失败，请执行git pull 验证代码是否冲突...----" "[31m"
@@ -150,6 +165,8 @@ elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     fi
 else
     # 流水线
-    build build_version
+    build
+    login
+    build_version
     echo '123'
 fi
