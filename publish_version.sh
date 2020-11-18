@@ -160,8 +160,8 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     login   #登陆
     gather_info #收集icafe信息
     preCommitId=$(commit_code) #提交代码
-    version=$(build_version preCommitId)   #构建版本
-    publish version preCommitId
+    version=$(build_version $preCommitId)   #构建版本
+    publish $version $preCommitId
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info
