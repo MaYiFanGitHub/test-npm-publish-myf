@@ -32,7 +32,6 @@ function publish() {
         print "----请使用 npm i @baidu/med-ui@$version -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
         if [ "$env_type" = "local" ]; then
-            echo $1
             git reset --soft $1
             commit_code
             print "----如需发布正式版本，请执行XXX命令----" 
