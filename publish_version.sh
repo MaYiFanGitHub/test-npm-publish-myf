@@ -9,14 +9,14 @@ function print() {
 
 # 构造版本发包
 function build_version() {
-    if [ $2 -eq 0 ]; then
-        preCommitId=`git rev-parse HEAD`
-        git commit -m '构造版本临时提交'
-    fi
+    # if [ $2 -eq 0 ]; then
+    #     preCommitId=`git rev-parse HEAD`
+    #     git commit -m '构造版本临时提交'
+    # fi
     username=`npm whoami`
 
     print "----正在构造版本...----" "[32m"
-    version=`npm version $1 -m "$username update to %s"`
+    version=`npm version $publish_type`
 
     if [ $? -eq 0 ]; then
         print "----构造版本成功，最新的版本号为$version----" "[32m"
@@ -26,9 +26,9 @@ function build_version() {
     else
         print "----构造失败----" "[31m"
         
-        if [ $2 -eq 0 ]; then
-            git reset --soft $preCommitId
-        fi
+        # if [ $2 -eq 0 ]; then
+        #     git reset --soft $preCommitId
+        # fi
         exit 1
     fi
 }
@@ -143,6 +143,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     echo 1111
     login   #登陆
     echo 2222
+    build_version   #构建版本
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     cr
