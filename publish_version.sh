@@ -98,6 +98,7 @@ function commit_code() {
 
 # CR
 function cr() {
+    gi pull
     git reset --soft origin/master
     git add .
     git commit -m '哈哈哈cr'
