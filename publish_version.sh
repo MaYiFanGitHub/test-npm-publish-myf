@@ -131,8 +131,9 @@ commet_info="" # 提交信息
 
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
-    gather_info
-    commit_code
+    gather_info #收集icafe信息
+    commit_code #提交代码
+    build   #编译
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     cr
