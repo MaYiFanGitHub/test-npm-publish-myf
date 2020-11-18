@@ -26,9 +26,7 @@ function build_version() {
     else
         print "----构造失败----" "[31m"
         
-        # if [ $2 -eq 0 ]; then
-        #     git reset --soft $preCommitId
-        # fi
+        git reset --soft $preCommitId
         exit 1
     fi
 }
@@ -92,8 +90,8 @@ function gather_info() {
     fi
 }
 
-# 提交代码
-function commit_code() {
+# 获取最新代码
+function pull_code() {
     print "---正在拉取最新代码...----" "[31m"
 
     git pull
@@ -106,9 +104,13 @@ function commit_code() {
         print "---请解决冲突后重试...----" "[31m"
         exit 1
     fi
+}
+
+# 提交代码
+function commit_code() {
+    preCommitId=`git rev-parse HEAD`
 
     git add .
-
     if [ "`git diff --cached --name-only`" != "" ]; then
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
     fi
@@ -116,6 +118,8 @@ function commit_code() {
         print "---提交代码失败...----" "[31m"
         exit 1
     fi
+
+    return "$preCommitId"
 }
 
 # CR
@@ -156,11 +160,12 @@ commet_info="" # 提交信息
 
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
+    pull_code # 更新代码
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
-    commit_code #提交代码
-    build_version   #构建版本
+    preCommitId=$(commit_code) #提交代码
+    build_version preCommitId   #构建版本
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info

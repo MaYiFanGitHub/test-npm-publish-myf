@@ -4,6 +4,8 @@ const spawn = require('child_process').spawn;
 const { exit } = require('process');
 const chalk = require('chalk');
 
+// 123
+// 123
 /* 命令打印输出 */
 const __print = work => {
     work.stderr.on('data', d => {
@@ -18,6 +20,7 @@ const __print = work => {
         console.log(`子进程退出，退出码 ${code}`);
     });
 };
+// 阿斯顿发顺丰的
 
 /* 登陆 */
 const login = (success, error) => {
