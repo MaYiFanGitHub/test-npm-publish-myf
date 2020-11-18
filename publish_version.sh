@@ -134,6 +134,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     gather_info #收集icafe信息
     commit_code #提交代码
     build   #编译
+    echo 1111
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     cr
