@@ -48,7 +48,7 @@ function publish() {
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
-        git tag -d $version
+        # git tag -d $version
         print "----发布失败...----" "[31m"
 
         # if [ "$2" != "" ]; then
@@ -115,9 +115,8 @@ function build() {
         print "----编译失败...----" "[31m"
         print "$build_res" "[31m"
         exit 1
-    else
-        print "----编译成功...----"
     fi
+    print "----编译成功...----"
 }
 
 # 获取提交文件
@@ -140,9 +139,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     gather_info #收集icafe信息
     commit_code #提交代码
     build   #编译
-    echo 1111
     login   #登陆
-    echo 2222
     build_version   #构建版本
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
