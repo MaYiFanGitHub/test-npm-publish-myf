@@ -127,16 +127,6 @@ function build() {
     print "----编译成功...----"
 }
 
-# 获取提交文件2
-# git add . 1
-
-# STAGE_FILE=1
-if [ "`git diff --cached --name-only`" != "" ]; then
-    STAGE_FILE=0
-fi
-
-
-
 env_type=$1 # 环境类型
 publish_type=$2 # 发包类型
 icafe_id="" # icafeID
@@ -147,7 +137,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
-    preCommitId=`git rev-parse HEAD`
+    preCommitId=`git rev-parse HEAD` #上次版本ID,用于回退
     commit_code #提交代码
     build_version $preCommitId   #构建版本
     publish $preCommitId
