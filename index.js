@@ -41,7 +41,7 @@ const gitPull = (success, error) => {
     console.log(chalk.green('[INFO]'), '同步远程最新代码...\n')
     // let cmd = 'git pull';
     __print(
-        exec('git fetch origin')
+        exec('git pull')
     );
 }
 
