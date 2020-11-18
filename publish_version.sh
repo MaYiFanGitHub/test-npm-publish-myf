@@ -34,6 +34,7 @@ function publish() {
         if [ "$env_type" = "local" ]; then
             echo $1
             git reset --soft $1
+            commit_code
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
