@@ -17,7 +17,6 @@
 # else
 # echo 2
 # fi
-
 read -t 30 -p "请输入icafeId:" name
 read -t 60 -p "请输入本次修改的信息:" pwd
 
