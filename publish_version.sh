@@ -44,9 +44,9 @@ function publish() {
         
         if [ "$env_type" = "local" ]; then
             # 变更为一条commit信息
-            git reset --soft origin/master
-            git add .
-            git commit -m "变更为一条commit信息$version"
+            # git reset --soft origin/master
+            # git add .
+            # git commit -m "变更为一条commit信息$version"
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
@@ -95,6 +95,7 @@ function pull_code() {
     print "---正在拉取最新代码...----" "[31m"
 
     git pull
+    sleep 100
     if [ $? -eq 1 ]; then
         print "---拉取最新代码失败...----" "[31m"
         exit 1
@@ -160,7 +161,7 @@ commet_info="" # 提交信息
 
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
-    pull_code # 更新代码
+    # pull_code # 更新代码
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
