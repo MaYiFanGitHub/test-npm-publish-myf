@@ -60,15 +60,17 @@ function publish() {
 
 # 登陆
 function login() {
+    print "----正在尝试登陆...----" "[32m"
     npm whoami >/dev/null 2>&1
     if [ $? -eq 1 ]; then
-        print "----当前npm用户未登陆，正在使用默认账号进行登陆！----"
+        print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
         (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
         if [ $? -eq 1 ]; then
             print "---自动登陆失败...----" "[31m"
             exit 1
         fi
     fi
+    print "----登陆成功----" "[32m"
 }
 
 # 收集icafeID与commit信息
