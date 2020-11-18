@@ -151,7 +151,7 @@ elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info
     commit_code
-    cr
+    git push origin HEAD:refs/for/master
     if [ $? -eq 1 ]; then
         print "----发起CR失败，请执行git pull 验证代码是否冲突...----" "[31m"
         exit 1
