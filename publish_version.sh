@@ -94,7 +94,7 @@ function gather_info() {
 function pull_code() {
     print "---正在拉取最新代码...----" "[31m"
 
-    pull_res=`git pull`
+    git pull
     if [ $? -eq 1 ]; then
         print "---拉取最新代码失败...----" "[31m"
         exit 1
