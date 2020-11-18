@@ -85,7 +85,7 @@ function gather_info() {
 # 提交代码
 function commit_code() {
     git add .
-    git commit -m "icafeId: $icafe_id, $commet_info"
+    git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
     if [ $? -eq 1 ]; then
         print "---提交代码失败...----" "[31m"
         exit 1
