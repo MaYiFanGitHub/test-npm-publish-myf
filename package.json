@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node index.js",
-    "build:components": "echo 编译成功 && exit 1"
+    "build:components": "echo COMPILE ERROR && exit 1"
   },
   "keywords": [],
   "author": "",
