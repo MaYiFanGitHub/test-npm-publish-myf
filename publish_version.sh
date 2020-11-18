@@ -100,10 +100,17 @@ function pull_code() {
         exit 1
     fi
 
+<<<<<<< HEAD
     if [ "`git diff --check`" != "" ]; then
         print "---请解决冲突后重试...----" "[31m"
         exit 1
     fi
+=======
+    # if [ "`git diff --check`" != "" ]; then
+    #     print "---请解决冲突后重试...----" "[31m"
+    #     exit 1
+    # fi
+>>>>>>> 5360b05c1ad3ea34ade2e80cb29de22be8ba16bd
 }
 
 # 提交代码
