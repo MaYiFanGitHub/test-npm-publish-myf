@@ -57,11 +57,12 @@ function login() {
     print "----正在尝试登陆NPM...----" "[32m"
     npm whoami >/dev/null 2>&1
     if [ $? -eq 1 ]; then
-        print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
-        (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
-        if [ $? -eq 1 ]; then
-            print "---NPM自动登陆失败...----" "[31m"
-            exit 1
+        if [ "$env_type" = "local" ]; then
+            print "---NPM未登陆,请在下方进行登陆...----" "[31m"
+            npm login
+        else
+            print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
+            (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
         fi
     fi
     print "----NPM账号登陆成功----" "[32m"
@@ -82,23 +83,6 @@ function gather_info() {
     fi
 }
 
-# 获取最新代码
-function pull_code() {
-    print "---正在拉取最新代码...----" "[31m"
-
-    git pull
-    sleep 100
-    if [ $? -eq 1 ]; then
-        print "---拉取最新代码失败...----" "[31m"
-        exit 1
-    fi
-
-    if [ "`git diff --check`" != "" ]; then
-        print "---请解决冲突后重试...----" "[31m"
-        exit 1
-    fi
-}
-
 # 提交代码
 function commit_code() {
     git add .
@@ -106,7 +90,7 @@ function commit_code() {
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
     fi
     if [ $? -eq 1 ]; then
-        print "---提交代码失败...----" "[31m"
+        print "---commit提交代码失败...----" "[31m"
         git reset HEAD
         exit 1
     fi
@@ -146,7 +130,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     preCommitId=`git rev-parse HEAD` #上次版本ID,用于回退
     commit_code #提交代码
     build_version $preCommitId   #构建版本
-    publish $preCommitId
+    publish $preCommitId #发包
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info
