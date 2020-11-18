@@ -43,9 +43,10 @@ function publish() {
         now_version=`npm view test-publish-npm-myf version`
         print "----版本发布成功，当前版本号$version----" "[32m"
         print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
-        print "----请自行确认本次更改的代码，是否要推送到远程仓库（git push origin HEAD:refs/for/master）----" 
-
-        exit 0
+        
+        if [ $? -eq 0 ]; then
+            print "----如需发布正式版本，请执行XXX命令----" 
+        fi
     else
         git tag -d $version
         print "----发布失败...----" "[31m"
@@ -70,14 +71,25 @@ function login() {
 function gather_info() {
     read -t 30 -p "请输入icafeId:" icafe_id
     read -t 60 -p "请输入本次修改的信息:" commet_info
+
+    if [ -z $icafe_id  ]; then
+        print "----icafeId 不能为空...----" "[31m"
+        exit 1
+    fi
+    if [ -z $commet_info  ]; then
+        print "----本次修改信息不能为空...----" "[31m"
+        exit 1
+    fi
 }
 
 # 提交代码
 function commit_code() {
-    git reset --soft origin/master
-
     git add .
-    git commit -m '111111'
+    git commit -m "icafeId: $icafe_id, $commit_code"
+    if [ $? -eq 1 ]; then
+        print "---提交代码失败...----" "[31m"
+        exit 1
+    fi
 }
 
 # CR
@@ -112,14 +124,15 @@ fi
 
 
 
-# 环境类型
-env_type=$1
-# 发包类型
-publish_type=$2
+env_type=$1 # 环境类型
+publish_type=$2 # 发包类型
+icafe_id="" # icafeID
+commet_info="" # 提交信息
+
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
     gather_info
-
+    commit_code
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     cr
