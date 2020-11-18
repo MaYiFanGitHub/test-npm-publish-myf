@@ -3,7 +3,9 @@ const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const { exit } = require('process');
 const chalk = require('chalk');
-
+// mmmmmmmmmmmmmmmm
+// / 1231231231232112
+// 123
 /* 命令打印输出 */
 const __print = work => {
     work.stderr.on('data', d => {
