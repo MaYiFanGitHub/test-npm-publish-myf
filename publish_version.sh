@@ -14,30 +14,25 @@ function build_version() {
 
     if [ $? -eq 1 ]; then
         print "----构造失败----" "[31m"
-        git reset --soft $preCommitId
+        git reset --soft $1
         exit 1
     fi
     
     print "----构造版本成功，最新的版本号为$version----" "[32m"
-    return "$version"
 }
 
 # 发包
 function publish() {
-    version=$1
-    print "----正在发布版本 $version...----" "[32m"
+    print "----正在发布版本...----" "[32m"
     npm publish --registry=http://registry.npm.baidu-int.com
-    # npm publish
     if [ $? -eq 0 ]; then
-        now_version=`npm view @baidu/publish-test-mayifan version`
+        sleep 1
+        version=`npm view @baidu/publish-test-mayifan version`
         print "----版本发布成功，当前版本号$version----" "[32m"
-        print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
+        print "----请使用 npm i @baidu/med-ui@$version -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
         if [ "$env_type" = "local" ]; then
-            # 变更为一条commit信息
-            # git reset --soft origin/master
-            # git add .
-            # git commit -m "变更为一条commit信息$version"
+            git reset --soft $1
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
@@ -148,7 +143,6 @@ commet_info="" # 提交信息
 
 if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     # 测试包
-    # pull_code # 更新代码
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
