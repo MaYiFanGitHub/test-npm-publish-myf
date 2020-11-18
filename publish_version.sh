@@ -9,19 +9,17 @@ function print() {
 
 # 构造版本发包
 function build_version() {
-    username=`npm whoami`
-
     print "----正在构造版本...----" "[32m"
     version=`npm version $publish_type`
 
     if [ $? -eq 1 ]; then
         print "----构造失败----" "[31m"
-        git reset --soft $1
+        git reset --soft $preCommitId
         exit 1
     fi
-
+    
     print "----构造版本成功，最新的版本号为$version----" "[32m"
-    echo $version
+    return "$version"
 }
 
 # 发包
@@ -31,7 +29,7 @@ function publish() {
     npm publish --registry=http://registry.npm.baidu-int.com
     # npm publish
     if [ $? -eq 0 ]; then
-        now_version=`npm view test-publish-npm-myf version`
+        now_version=`npm view @baidu/publish-test-mayifan version`
         print "----版本发布成功，当前版本号$version----" "[32m"
         print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
@@ -40,7 +38,6 @@ function publish() {
             # git reset --soft origin/master
             # git add .
             # git commit -m "变更为一条commit信息$version"
-            git reset --soft $2
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
@@ -103,8 +100,6 @@ function pull_code() {
 
 # 提交代码
 function commit_code() {
-    preCommitId=`git rev-parse HEAD`
-
     git add .
     if [ "`git diff --cached --name-only`" != "" ]; then
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
@@ -113,8 +108,6 @@ function commit_code() {
         print "---提交代码失败...----" "[31m"
         exit 1
     fi
-
-    echo $preCommitId
 }
 
 # CR
@@ -159,9 +152,10 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
-    preCommitId=$(commit_code) #提交代码
-    version=$(build_version $preCommitId)   #构建版本
-    publish $version $preCommitId
+    preCommitId=`git rev-parse HEAD`
+    commit_code #提交代码
+    build_version $preCommitId   #构建版本
+    publish $preCommitId
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info
