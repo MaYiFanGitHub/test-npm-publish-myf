@@ -21,7 +21,7 @@ function build_version() {
     fi
 
     print "----构造版本成功，最新的版本号为$version----" "[32m"
-    return "$version"
+    echo $version
 }
 
 # 发包
@@ -114,7 +114,7 @@ function commit_code() {
         exit 1
     fi
 
-    return "$preCommitId"
+    echo $preCommitId
 }
 
 # CR
