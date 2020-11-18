@@ -1,10 +1,6 @@
 {
   "name": "@baidu/publish-test-mayifan",
-<<<<<<< HEAD
   "version": "1.0.5-4",
-=======
-  "version": "1.0.5-3",
->>>>>>> d7deaadd1cde62886713c092bdbc819fe57f78e8
   "description": "",
   "main": "index.js",
   "scripts": {
