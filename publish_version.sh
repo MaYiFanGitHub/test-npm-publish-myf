@@ -22,6 +22,7 @@ function build_version() {
         print "----构造版本成功，最新的版本号为$version----" "[32m"
         echo $preCommitIdgi
         # publish $version $preCommitId
+        publish $version
     else
         print "----构造失败----" "[31m"
         
@@ -43,16 +44,16 @@ function publish() {
         print "----版本发布成功，当前版本号$version----" "[32m"
         print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
-        if [ $? -eq 0 ]; then
+        if [ "$env_type" = "local" ]; then
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
         git tag -d $version
         print "----发布失败...----" "[31m"
 
-        if [ "$2" != "" ]; then
-            git reset --soft $2
-        fi
+        # if [ "$2" != "" ]; then
+        #     git reset --soft $2
+        # fi
         exit 1
     fi
 }
