@@ -9,26 +9,19 @@ function print() {
 
 # 构造版本发包
 function build_version() {
-    # if [ $2 -eq 0 ]; then
-    #     preCommitId=`git rev-parse HEAD`
-    #     git commit -m '构造版本临时提交'
-    # fi
     username=`npm whoami`
 
     print "----正在构造版本...----" "[32m"
     version=`npm version $publish_type`
 
-    if [ $? -eq 0 ]; then
-        print "----构造版本成功，最新的版本号为$version----" "[32m"
-        echo $preCommitIdgi
-        # publish $version $preCommitId
-        publish $version
-    else
+    if [ $? -eq 1 ]; then
         print "----构造失败----" "[31m"
-        
-        git reset --soft $preCommitId
+        git reset --soft $1
         exit 1
     fi
+
+    print "----构造版本成功，最新的版本号为$version----" "[32m"
+    return "$version"
 }
 
 # 发包
@@ -47,6 +40,7 @@ function publish() {
             # git reset --soft origin/master
             # git add .
             # git commit -m "变更为一条commit信息$version"
+            git reset --soft $2
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
@@ -166,7 +160,8 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     login   #登陆
     gather_info #收集icafe信息
     preCommitId=$(commit_code) #提交代码
-    build_version preCommitId   #构建版本
+    version=$(build_version preCommitId)   #构建版本
+    publish version preCommitId
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR
     gather_info
