@@ -110,6 +110,7 @@ function cr() {
     echo "\n $date\n $name \n $note \n" >> $log_path
 
     if [ $is_commit -eq 0 ]; then
+        echo '------'
         git reset --soft HEAD^
     fi
     commit_code
