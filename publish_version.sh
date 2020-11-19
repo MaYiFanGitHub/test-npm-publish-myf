@@ -105,9 +105,8 @@ function cr() {
     date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
     name=`git log --pretty=format:"%an" $preCommitId -1`
     note=`git log --pretty=format:"%s" $preCommitId  -1`
-    # 写入changelog
     log_path=`pwd`/changelog.inc
-    echo "$date, $name, $note" >> $log_path
+    echo "\n$date\n $name\n$note\n" >> $log_path
 
     git reset --soft HEAD^
     commit_code
