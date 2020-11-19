@@ -102,10 +102,9 @@ function commit_code() {
 function cr() {
     name=`npm whoami`
     date=`date "+%Y-%m-%d %H:%M:%S"`
-    info=`commet_info`
 
     log_path=`pwd`/changelog.inc
-    echo "\n $date\n $name \n $info \n" >> $log_path
+    echo "\n $date\n $name \n $commet_info \n" >> $log_path
     commit_code
 
     git push origin HEAD:refs/for/master
