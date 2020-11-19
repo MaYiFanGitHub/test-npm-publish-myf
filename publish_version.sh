@@ -100,11 +100,18 @@ function commit_code() {
 
 # CR
 function cr() {
+    commit_res=$(commit_code)
+    echo commit_res
+    echo $commit_res
     name=`npm whoami`
     date=`date "+%Y-%m-%d %H:%M:%S"`
 
     log_path=`pwd`/changelog.inc
     echo "\n $date\n $name \n $commet_info \n" >> $log_path
+
+    if [ $commit_res -eq 0 ]; then
+        git reset --soft HEAD^
+    fi
     commit_code
 
     git push origin HEAD:refs/for/master
