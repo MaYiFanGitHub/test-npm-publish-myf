@@ -99,6 +99,8 @@ function commit_code() {
 
 # CR
 function cr() {
+    commit_code
+
     preCommitId=`git rev-parse HEAD` #上次版本ID
     date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
     name=`git log --pretty=format:"%an" $preCommitId -1`
@@ -106,7 +108,9 @@ function cr() {
     # 写入changelog
     log_path=`pwd`/changelog.inc
     echo "$date, $name, $note" >> $log_path
-    commit_code name date note
+
+    git reset --soft HEAD^
+    commit_code
 
     git push origin HEAD:refs/for/master
     if [ $? -eq 0 ]; then
