@@ -158,7 +158,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     build_version $preCommitId   #构建版本
     publish $preCommitId #发包
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
-    # 发CR1
+    # 发CR
     gather_info
     login
     cr
