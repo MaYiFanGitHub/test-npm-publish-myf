@@ -154,6 +154,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     publish $preCommitId #发包
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR1
+    gather_info
     cr
 else
     # 流水线
