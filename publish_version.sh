@@ -37,7 +37,7 @@ function publish() {
         
         if [ "$env_type" = "local" ]; then
             git reset --soft $1
-            # commit_code
+            git reset HEAD
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
@@ -55,7 +55,7 @@ function publish() {
 
 # 登陆
 function login() {
-    print "----正在尝试登陆NPM...----" "[32m"
+    print "----正在验证是否已登陆NPM...----" "[32m"
     npm whoami >/dev/null 2>&1
     if [ $? -eq 1 ]; then
         if [ "$env_type" = "local" ]; then
@@ -66,7 +66,7 @@ function login() {
             (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
         fi
     fi
-    print "----NPM账号登陆成功----" "[32m"
+    print "----NPM账号已登陆----" "[32m"
 }
 
 # 收集icafeID与commit信息
@@ -99,17 +99,18 @@ function commit_code() {
 
 # CR
 function cr() {
-    commit_code
+    preCommitId=`git rev-parse HEAD` #上次版本ID
+    date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
+    name=`git log --pretty=format:"%an" $preCommitId -1`
+    note=`git log --pretty=format:"%s" $preCommitId  -1`
+    # 写入changelog
+    log_path=`pwd`/changelog.inc
+    echo "$date, $name, $note" >> $log_path
+    commit_code name date note
+
     git push origin HEAD:refs/for/master
     if [ $? -eq 0 ]; then
-        # 写入changelog
         # echo -i "1i\127.0.0.1\n123\n456" >> $log_path
-        preCommitId=`git rev-parse HEAD` #上次版本ID
-        date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
-        name=`git log --pretty=format:"%an" $preCommitId -1`
-        note=`git log --pretty=format:"%s" $preCommitId  -1`
-        log_path=`pwd`/changelog.inc
-        echo -i "$date, $name, $note" >> $log_path
         # sed -i '' -e '1i \
         # FE: wangkai37' $log_path
         # sed -i '' -e '1i \
@@ -118,7 +119,7 @@ function cr() {
         # NOTE: 新增测试组件' $log_path
 
 
-
+        echo 122345
         # 其他（例如推送远程机器）
     else
         print "----发起CR失败----" "[31m"
