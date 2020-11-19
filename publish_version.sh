@@ -104,7 +104,7 @@ function cr() {
         echo '1111111'
         exit 1
     fi
-
+    git reset --soft origin/master
     commit_code
     git push origin HEAD:refs/for/master
     if [ $? -eq 0 ]; then
