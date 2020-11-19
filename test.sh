@@ -1,3 +1,15 @@
+<<<<<<< Updated upstream
+#!/usr/bin/sh
+# sed -i '1i\Insert this line' file.txt 
+$ sed -i '1i\ABCDE' file.txt
+
+grep -l \'texttofind\' * | xargs sed -i '' 's/toreplace/replacewith/g'
+grep -l \'texttofind\' * | xargs sed -i 's/toreplace/replacewith/g'
+
+###2019-03-01
+   FE: wangkai37
+   NOTE: 新增测试组件
+=======
 # #!/usr/bin/expect
 # spawn npm login
 # expect "Username:"
@@ -17,8 +29,22 @@
 # else
 # echo 2
 # fi
-read -t 30 -p "请输入icafeId:" name
-read -t 60 -p "请输入本次修改的信息:" pwd
+# read -t 30 -p "请输入icafeId:" name
+# read -t 60 -p "请输入本次修改的信息:" pwd
 
-echo "用户名为:$name"
-echo "用户密码为:$pwd"
+# echo "用户名为:$name"
+# echo "用户密码为:$pwd"
+
+
+sed -i '' -e '1i \
+ ' file.txt
+sed -i '' -e '1i \
+   FE: wangkai37' file.txt
+sed -i '' -e '1i \
+###2019-03-01' file.txt
+sed -i '' -e '1i \
+   NOTE: 新增测试组件' file.txt
+
+
+
+>>>>>>> Stashed changes

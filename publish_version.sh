@@ -9,55 +9,46 @@ function print() {
 
 # 构造版本发包
 function build_version() {
-    # if [ $2 -eq 0 ]; then
-    #     preCommitId=`git rev-parse HEAD`
-    #     git commit -m '构造版本临时提交'
-    # fi
-    username=`npm whoami`
-
     print "----正在构造版本...----" "[32m"
     version=`npm version $publish_type`
 
-    if [ $? -eq 0 ]; then
-        print "----构造版本成功，最新的版本号为$version----" "[32m"
-        echo $preCommitIdgi
-        # publish $version $preCommitId
-        publish $version
-    else
+    if [ $? -eq 1 ]; then
         print "----构造失败----" "[31m"
-        
-        # if [ $2 -eq 0 ]; then
-        #     git reset --soft $preCommitId
-        # fi
+
+        if [ "$env_type" = "local" ]; then
+            git reset --soft $1
+            git reset HEAD
+        fi
         exit 1
     fi
+    
+    print "----构造版本成功，最新的版本号为$version----" "[32m"
 }
 
 # 发包
 function publish() {
-    version=$1
-    print "----正在发布版本 $version...----" "[32m"
+    print "----正在发布版本...----" "[32m"
     npm publish --registry=http://registry.npm.baidu-int.com
-    # npm publish
     if [ $? -eq 0 ]; then
-        now_version=`npm view test-publish-npm-myf version`
+        sleep 1
+        version=`npm view @baidu/publish-test-mayifan version`
         print "----版本发布成功，当前版本号$version----" "[32m"
-        print "----请使用 npm i @baidu/med-ui@${version#*v} -S --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
+        print "----请使用 npm i @baidu/med-ui@$version --save --registry=http://registry.npm.baidu-int.com 更新依赖----" "[32m"
         
         if [ "$env_type" = "local" ]; then
-            # 变更为一条commit信息
-            git reset --soft origin/master
-            git add .
-            git commit -m "变更为一条commit信息$version"
+            git reset --soft $1
+            # commit_code
             print "----如需发布正式版本，请执行XXX命令----" 
         fi
     else
-        # git tag -d $version1
         print "----发布失败...----" "[31m"
 
-        # if [ "$2" != "" ]; then
-        #     git reset --soft $2
-        # fi
+        if [ "$env_type" = "local" ]; then
+            git reset --soft $1
+            git reset HEAD
+            git checkout ./package.json
+            git checkout ./package-lock.json
+        fi
         exit 1
     fi
 }
@@ -67,11 +58,12 @@ function login() {
     print "----正在尝试登陆NPM...----" "[32m"
     npm whoami >/dev/null 2>&1
     if [ $? -eq 1 ]; then
-        print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
-        (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
-        if [ $? -eq 1 ]; then
-            print "---NPM自动登陆失败...----" "[31m"
-            exit 1
+        if [ "$env_type" = "local" ]; then
+            print "---NPM未登陆,请在下方进行登陆...----" "[31m"
+            npm login
+        else
+            print "----当前npm用户未登陆，正在使用默认账号进行登陆！----" "[32m"
+            (echo "mayifan" && sleep 1 && echo "qq9320996688" && sleep 1 && echo "83964472@qq.com") | npm login
         fi
     fi
     print "----NPM账号登陆成功----" "[32m"
@@ -94,38 +86,50 @@ function gather_info() {
 
 # 提交代码
 function commit_code() {
-    print "---正在拉取最新代码...----" "[31m"
-
-    git pull
-    if [ $? -eq 1 ]; then
-        print "---拉取最新代码失败...----" "[31m"
-        exit 1
-    fi
-
-    if [ "`git diff --check`" != "" ]; then
-        print "---请解决冲突后重试...----" "[31m"
-        exit 1
-    fi
-
     git add .
-
     if [ "`git diff --cached --name-only`" != "" ]; then
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
     fi
     if [ $? -eq 1 ]; then
-        print "---提交代码失败...----" "[31m"
+        print "---commit提交代码失败...----" "[31m"
+        git reset HEAD
         exit 1
     fi
 }
 
 # CR
 function cr() {
-    # 写入changelog
-    log_path=`pwd`/changelog.inc
-    echo -i "1i\127.0.0.1\n123\n456" >> $log_path
-
+    git pull
+    if [ $? -eq 1 ]; then
+        echo '1111111'
+        exit 1
+    fi
+    git reset --soft origin/master
     commit_code
     git push origin HEAD:refs/for/master
+    if [ $? -eq 0 ]; then
+        # 写入changelog
+        # echo -i "1i\127.0.0.1\n123\n456" >> $log_path
+        preCommitId=`git rev-parse HEAD` #上次版本ID
+        date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
+        name=`git log --pretty=format:"%an" $preCommitId -1`
+        note=`git log --pretty=format:"%s" $preCommitId  -1`
+        log_path=`pwd`/changelog.inc
+        echo -i "$date, $name, $note" >> $log_path
+        # sed -i '' -e '1i \
+        # FE: wangkai37' $log_path
+        # sed -i '' -e '1i \
+        # ###2019-03-01' $log_path
+        # sed -i '' -e '1i \
+        # NOTE: 新增测试组件' $log_path
+
+
+
+        # 其他（例如推送远程机器）
+    else
+        print "----发起CR失败----" "[31m"
+        exit 1
+    fi
 }
 
 # 编译
@@ -139,16 +143,6 @@ function build() {
     print "----编译成功...----"
 }
 
-# 获取提交文件2
-# git add . 1
-
-# STAGE_FILE=1
-if [ "`git diff --cached --name-only`" != "" ]; then
-    STAGE_FILE=0
-fi
-
-
-
 env_type=$1 # 环境类型
 publish_type=$2 # 发包类型
 icafe_id="" # icafeID
@@ -159,21 +153,17 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
     build   #编译
     login   #登陆
     gather_info #收集icafe信息
+    preCommitId=`git rev-parse HEAD` #上次版本ID,用于回退
     commit_code #提交代码
-    build_version   #构建版本
+    build_version $preCommitId   #构建版本
+    publish $preCommitId #发包
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
-    # 发CR
-    gather_info
-    commit_code
+    # 发CR1
     cr
-    if [ $? -eq 1 ]; then
-        print "----发起CR失败，请执行git pull 验证代码是否冲突...----" "[31m"
-        exit 1
-    fi
 else
     # 流水线
     build
     login
-    build_version
+    build_versionafsfa
     echo '123'
 fi
