@@ -100,19 +100,12 @@ function commit_code() {
 
 # CR
 function cr() {
-    is_commit=`commit_code`
+    name=`npm whoami`
+    date=`date "+%Y-%m-%d %H:%M:%S"`
+    info=`commet_info`
 
-    preCommitId=`git rev-parse HEAD` #上次版本ID
-    date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
-    name=`git log --pretty=format:"%an" $preCommitId -1`
-    note=`git log --pretty=format:"%s" $preCommitId  -1`
     log_path=`pwd`/changelog.inc
-    echo "\n $date\n $name \n $note \n" >> $log_path
-
-    if [ $is_commit -eq 0 ]; then
-        echo '------'
-        git reset --soft HEAD^
-    fi
+    echo "\n $date\n $name \n $info \n" >> $log_path
     commit_code
 
     git push origin HEAD:refs/for/master
@@ -162,6 +155,7 @@ if [ "$env_type" = "local" -a "$publish_type" = "prerelease" ]; then
 elif [ "$env_type" = "local" -a "$publish_type" != "prerelease" ]; then
     # 发CR1
     gather_info
+    login
     cr
 else
     # 流水线
