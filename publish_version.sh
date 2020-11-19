@@ -89,7 +89,6 @@ function commit_code() {
     git add .
     if [ "`git diff --cached --name-only`" != "" ]; then
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
-        return 0
     fi
     if [ $? -eq 1 ]; then
         print "---commit提交代码失败...----" "[31m"
@@ -100,37 +99,35 @@ function commit_code() {
 
 # CR
 function cr() {
-    commit_res=$(commit_code)
-    echo commit_res
-    echo $commit_res
-    # name=`npm whoami`
-    # date=`date "+%Y-%m-%d %H:%M:%S"`
+    name=`npm whoami`
+    date=`date "+%Y-%m-%d %H:%M:%S"`
 
-    # log_path=`pwd`/changelog.inc
-    # echo "\n $date\n $name \n $commet_info \n" >> $log_path
+    log_path=`pwd`/changelog.inc
+    echo "\n $date\n $name \n $commet_info \n" >> $log_path
+    commit_code
+    if [ $? -eq 1 ]; then  # 取消changelog
+        git reset HEAD
+        git checkout ./changelog.inc
+    fi
 
-    # if [ $commit_res -eq 0 ]; then
-    #     git reset --soft HEAD^
-    # fi
-    # commit_code
-
-    # git push origin HEAD:refs/for/master
-    # if [ $? -eq 0 ]; then
-    #     # echo -i "1i\127.0.0.1\n123\n456" >> $log_path
-    #     # sed -i '' -e '1i \
-    #     # FE: wangkai37' $log_path
-    #     # sed -i '' -e '1i \
-    #     # ###2019-03-01' $log_path
-    #     # sed -i '' -e '1i \
-    #     # NOTE: 新增测试组件' $log_path
+    git push origin HEAD:refs/for/master
+    if [ $? -eq 0 ]; then
+        # echo -i "1i\127.0.0.1\n123\n456" >> $log_path
+        # sed -i '' -e '1i \
+        # FE: wangkai37' $log_path
+        # sed -i '' -e '1i \
+        # ###2019-03-01' $log_path
+        # sed -i '' -e '1i \
+        # NOTE: 新增测试组件' $log_path
 
 
-    #     echo 122345
-    #     # 其他（例如推送远程机器）
-    # else
-    #     print "----发起CR失败----" "[31m"
-    #     exit 1
-    # fi
+        echo 122345
+        # 其他（例如推送远程机器）
+    else
+        print "----发起CR失败----" "[31m"
+        git reset --soft HEAD^
+        exit 1
+    fi
 }
 
 # 编译
