@@ -89,6 +89,7 @@ function commit_code() {
     git add .
     if [ "`git diff --cached --name-only`" != "" ]; then
         git commit -m "icafeId: $icafe_id, 修改信息：$commet_info"
+        return 0
     fi
     if [ $? -eq 1 ]; then
         print "---commit提交代码失败...----" "[31m"
@@ -99,7 +100,7 @@ function commit_code() {
 
 # CR
 function cr() {
-    commit_code
+    is_commit=`commit_code`
 
     preCommitId=`git rev-parse HEAD` #上次版本ID
     date=`git log --pretty=format:"%cd" --date=format:'%Y-%m-%d %H:%M:%S' $preCommitId -1`
@@ -108,7 +109,9 @@ function cr() {
     log_path=`pwd`/changelog.inc
     echo "\n $date\n $name \n $note \n" >> $log_path
 
-    git reset --soft HEAD^
+    if [ $is_commit -eq 0 ]; then
+        git reset --soft HEAD^
+    fi
     commit_code
 
     git push origin HEAD:refs/for/master
