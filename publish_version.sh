@@ -104,6 +104,15 @@ function cr() {
         echo '1111111'
         exit 1
     fi
+    # 写入changelog
+    log_path=`pwd`/changelog.inc
+    sed -i '' -e '1i \
+    Hello World\nAAAAAA\nBBBB.' $log_path
+
+    date=`git log --pretty=format:“%cd” --date=format:'%Y-%m-%d %H:%M:%S'   85d692b -1`
+    name=`git log --pretty=format:“%an” 85d692b -1`
+    note=`git log --pretty=format:“%s”  -1`
+
     commit_code
     git push origin HEAD:refs/for/master
 
@@ -164,7 +173,6 @@ else
     # 流水线
     build
     login
-    build_version
-    publish
+    build_versionafsfa
     echo '123'
-fi
+fiadsffsd
