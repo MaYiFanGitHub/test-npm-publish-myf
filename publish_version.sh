@@ -99,18 +99,14 @@ function commit_code() {
 
 # CR
 function cr() {
-    # 写入changelog
-    log_path=`pwd`/changelog.inc
-    sed -i '' -e '1i \
-    Hello World\nAAAAAA\nBBBB.' $log_path
-
-    date=`git log --pretty=format:“%cd” --date=format:'%Y-%m-%d %H:%M:%S'   85d692b -1`
-    name=`git log --pretty=format:“%an” 85d692b -1`
-    note=`git log --pretty=format:“%s”  -1`
+    git pull
+    if [ $? -eq 1 ]; then
+        echo '1111111'
+        exit 1
+    fi
 
     commit_code
     git push origin HEAD:refs/for/master
-
     if [ $? -eq 0 ]; then
         # 写入changelog
         # echo -i "1i\127.0.0.1\n123\n456" >> $log_path
