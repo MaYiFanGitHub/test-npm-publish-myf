@@ -3,7 +3,9 @@ const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const { exit } = require('process');
 const chalk = require('chalk');
-
+const { appendFile } = require('fs');
+// 123123
+// asfasd
 /* 命令打印输出 */
 const __print = work => {
     work.stderr.on('data', d => {
@@ -17,8 +19,10 @@ const __print = work => {
     work.on('close', (code) => {
         console.log(`子进程退出，退出码 ${code}`);
     });
+    // 2222
 };
-
+// 阿斯顿发顺丰的
+// 123123
 /* 登陆 */
 const login = (success, error) => {
     console.log(chalk.green('[INFO]'), '正在登陆...\n')
