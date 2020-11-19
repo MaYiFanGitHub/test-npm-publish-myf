@@ -160,6 +160,7 @@ else
     # 流水线
     build
     login
-    build_versionafsfa
+    build_version
+    publish
     echo '123'
 fi
