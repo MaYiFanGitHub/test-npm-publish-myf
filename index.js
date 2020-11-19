@@ -19,10 +19,7 @@ const __print = work => {
     work.on('close', (code) => {
         console.log(`子进程退出，退出码 ${code}`);
     });
-    // appendFileasd
-    // asdf
-    // adf
-    // DataTransfer
+
 };
 // 阿斯顿发顺丰的
 
