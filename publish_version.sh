@@ -105,8 +105,6 @@ function cr() {
         exit 1
     fi
     commit_code
-    git reset --soft origin/master
-    commit_code
     git push origin HEAD:refs/for/master
     if [ $? -eq 0 ]; then
         # 写入changelog
