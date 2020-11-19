@@ -126,6 +126,8 @@ function cr() {
     else
         print "----发起CR失败----" "[31m"
         git reset --soft HEAD^
+        git reset HEAD
+        git checkout ./changelog.inc
         exit 1
     fi
 }
