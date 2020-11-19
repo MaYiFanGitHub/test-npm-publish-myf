@@ -99,11 +99,6 @@ function commit_code() {
 
 # CR
 function cr() {
-    git pull
-    if [ $? -eq 1 ]; then
-        echo '1111111'
-        exit 1
-    fi
     commit_code
     git push origin HEAD:refs/for/master
     if [ $? -eq 0 ]; then
